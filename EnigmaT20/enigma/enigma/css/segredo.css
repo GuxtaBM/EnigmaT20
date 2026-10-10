@@ -1,0 +1,243 @@
+/* =====================================================================
+   SEGREDO — ESTILOS
+   Cores, tamanhos e fontes principais estão em :root.
+   ===================================================================== */
+
+@font-face {
+  font-family: "Tormenta";
+  src: url("../assets/fonts/Tormenta.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  /* Imagem de fundo */
+  --fundo-imagem:  url("../assets/images/fundo-segredo.png");
+  --fundo-posicao: 50% 40%;
+
+  /* Paleta (tirada do próprio fundo) */
+  --sangue:       #b3121f;
+  --sangue-vivo:  #e8283a;
+  --osso:         #eadfd2;
+  --osso-apagado: rgba(234, 223, 210, .55);
+
+  /* Caracteres do enigma. Se preferir runas, troque por "rune" (assets/fonts/rune.ttf). */
+  --caractere-fonte:   "Tormenta", "Palatino Linotype", Palatino, Georgia, serif;
+  --caractere-tamanho: clamp(2rem, 5.2vw, 3.6rem);
+
+  /* Coração */
+  --coracao-altura: min(42svh, 78vw);
+  --pulso-escala:   .035;            /* quanto o coração cresce na batida (0 = nada) */
+
+  /* Atualizado pelo script a cada quadro: 0 (repouso) → 1 (batida) */
+  --pulso: 0;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { background: #14030a; }
+body {
+  margin: 0;
+  min-height: 100vh; min-height: 100svh;
+  color: var(--osso);
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------------------------------------------------------------------
+   FUNDO
+   --------------------------------------------------------------------- */
+.fundo {
+  position: fixed; inset: 0; z-index: 0;
+  background: var(--fundo-imagem) var(--fundo-posicao) / cover no-repeat;
+}
+/* Vermelho que respira junto com as batidas (muito sutil) */
+.brilho {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse 60% 55% at 50% 38%, rgba(232, 40, 58, .5), transparent 70%);
+  mix-blend-mode: screen;
+  opacity: calc(.04 + var(--pulso) * .22);
+}
+.veu {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(8, 0, 3, .62) 100%);
+}
+
+/* ---------------------------------------------------------------------
+   CENA
+   --------------------------------------------------------------------- */
+.cena {
+  position: relative; z-index: 2;
+  min-height: 100vh; min-height: 100svh;
+  padding: 3vh 1rem 3.5rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: clamp(.8rem, 2.6vh, 1.8rem);
+  transition: opacity 1.1s ease, filter 1.1s ease;
+}
+.cena.partindo { opacity: 0; filter: blur(6px); pointer-events: none; }
+
+/* ---------------------------------------------------------------------
+   CORAÇÃO
+   O GIF já pulsa sozinho; a escala extra é pequena de propósito.
+   --------------------------------------------------------------------- */
+.coracao {
+  position: relative;
+  height: var(--coracao-altura);
+  aspect-ratio: 444 / 613;           /* proporção real do GIF */
+  flex: none;
+  transform: scale(calc(1 + var(--pulso) * var(--pulso-escala)));
+  will-change: transform;
+}
+.coracao img {
+  position: relative; z-index: 1;
+  display: block; width: 100%; height: 100%;
+  object-fit: contain;
+  user-select: none; -webkit-user-drag: none;
+  filter: drop-shadow(0 .5rem 1.4rem rgba(0, 0, 0, .65));
+}
+/* Halo atrás do coração */
+.coracao::before {
+  content: "";
+  position: absolute; inset: -18%; z-index: 0;
+  background: radial-gradient(circle, rgba(232, 40, 58, .75) 0%, rgba(179, 18, 31, .35) 40%, transparent 68%);
+  opacity: calc(.18 + var(--pulso) * .6);
+  transform: scale(calc(.92 + var(--pulso) * .12));
+}
+
+/* ---------------------------------------------------------------------
+   ENIGMA
+   --------------------------------------------------------------------- */
+.enigma {
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(1rem, 3vh, 1.8rem);
+  width: 100%;
+}
+
+.enigma__colunas {
+  display: flex; justify-content: center;
+  gap: clamp(.5rem, 3vw, 1.7rem);
+}
+
+.coluna {
+  display: flex; flex-direction: column; align-items: center;
+  gap: .55rem;
+}
+
+.coluna__caractere {
+  font: 400 var(--caractere-tamanho) / 1 var(--caractere-fonte);
+  color: var(--osso);
+  text-shadow: 0 0 .5rem rgba(0, 0, 0, .9), 0 0 1.6rem rgba(179, 18, 31, .85);
+  user-select: none; -webkit-user-select: none;
+  min-width: 1ch;
+}
+
+.coluna__campo {
+  width: clamp(2.5rem, 11vw, 3.4rem);
+  height: clamp(2.9rem, 12vw, 3.8rem);
+  padding: 0;
+  text-align: center;
+  font: 400 1.5rem / 1 var(--caractere-fonte);
+  color: var(--osso);
+  caret-color: var(--sangue-vivo);
+  background: rgba(10, 1, 4, .5);
+  border: 1px solid rgba(179, 18, 31, .55);
+  border-radius: 2px;
+  outline: none;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  box-shadow: inset 0 0 .8rem rgba(0, 0, 0, .7);
+  transition: border-color .3s, box-shadow .3s, background .3s;
+}
+.coluna__campo:hover { border-color: rgba(232, 40, 58, .8); }
+.coluna__campo:focus {
+  border-color: var(--sangue-vivo);
+  background: rgba(30, 2, 8, .65);
+  box-shadow: inset 0 0 .8rem rgba(0, 0, 0, .7), 0 0 1rem rgba(232, 40, 58, .55);
+}
+.coluna__campo.preenchido { border-color: rgba(232, 40, 58, .75); }
+
+.enigma__colunas.recusado { animation: tremor .45s ease; }
+.enigma__colunas.recusado .coluna__campo { border-color: #d9585f; }
+
+/* Botão: sem cara de botão de site */
+.enigma__botao {
+  appearance: none; -webkit-appearance: none;
+  padding: .8rem 2.2rem;
+  background: rgba(10, 1, 4, .45);
+  border: 1px solid rgba(179, 18, 31, .7);
+  color: var(--osso);
+  font: 400 1.05rem / 1 var(--caractere-fonte);
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  box-shadow: 0 0 1.2rem rgba(179, 18, 31, .25);
+  transition: background .3s, box-shadow .3s, border-color .3s, color .3s;
+}
+.enigma__botao:hover,
+.enigma__botao:focus-visible {
+  background: rgba(120, 8, 20, .5);
+  border-color: var(--sangue-vivo);
+  box-shadow: 0 0 1.8rem rgba(232, 40, 58, .55);
+  outline: none;
+}
+.enigma__botao:active { transform: translateY(1px); }
+.enigma__botao:disabled { opacity: .5; cursor: default; }
+
+.enigma__mensagem {
+  min-height: 1.5em; margin: 0;
+  font: italic 1rem / 1.5 Georgia, "Times New Roman", serif;
+  letter-spacing: .08em;
+  color: #e0656c;
+  text-shadow: 0 0 .5rem rgba(0, 0, 0, .95);
+  opacity: 0;
+  transition: opacity .6s ease;
+  text-align: center;
+}
+.enigma__mensagem.visivel { opacity: 1; }
+
+@keyframes tremor {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(2px); }
+}
+
+/* ---------------------------------------------------------------------
+   CONTROLE DE SOM (canto inferior direito, discreto)
+   --------------------------------------------------------------------- */
+.som {
+  position: fixed; z-index: 5;
+  right: max(.9rem, env(safe-area-inset-right)); bottom: max(.9rem, env(safe-area-inset-bottom));
+  width: 2.4rem; height: 2.4rem;
+  display: grid; place-items: center;
+  padding: 0;
+  background: rgba(10, 1, 4, .4);
+  border: 1px solid rgba(179, 18, 31, .45);
+  border-radius: 50%;
+  color: var(--osso-apagado);
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .3s, color .3s, border-color .3s;
+}
+.som:hover, .som:focus-visible { opacity: 1; color: var(--osso); border-color: var(--sangue-vivo); outline: none; }
+.som__corte { display: none; }
+.som[aria-pressed="true"] .som__corte { display: block; }
+.som[aria-pressed="true"] .som__onda { display: none; }
+
+/* ---------------------------------------------------------------------
+   TELAS BAIXAS (celular deitado)
+   --------------------------------------------------------------------- */
+@media (max-height: 560px) {
+  .cena { flex-direction: row; flex-wrap: wrap; gap: 1rem 3rem; }
+  :root { --coracao-altura: min(70svh, 45vw); }
+  .enigma { width: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --pulso-escala: 0; }
+  .enigma__colunas.recusado { animation: none; }
+  .cena { transition-duration: .01s; }
+}

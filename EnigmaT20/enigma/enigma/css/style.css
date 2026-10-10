@@ -1,0 +1,392 @@
+/* =====================================================================
+   ENIGMA — ESTILOS
+   Tudo que você provavelmente vai querer mudar está em :root e nas
+   seções "FONTES" e "OLHOS". Os demais blocos são estrutura.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   FONTES
+   FonteSecreta = rune.ttf e Tormenta = Tormenta.ttf (já enviadas).
+   FontePrincipal ainda aguarda arquivo: coloque em assets/fonts/ com o nome abaixo.
+   O navegador tenta cada formato em ordem; os que não existirem são
+   ignorados. Enquanto os arquivos não chegam, vale a fonte reserva.
+   --------------------------------------------------------------------- */
+@font-face {
+  font-family: "FontePrincipal";
+  src: url("../assets/fonts/fonte-principal.woff2") format("woff2"),
+       url("../assets/fonts/fonte-principal.woff")  format("woff"),
+       url("../assets/fonts/fonte-principal.ttf")   format("truetype"),
+       url("../assets/fonts/fonte-principal.otf")   format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "FonteSecreta";
+  src: url("../assets/fonts/rune.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Tormenta";
+  src: url("../assets/fonts/Tormenta.ttf") format("truetype");
+  font-display: swap;
+}
+
+/* ---------------------------------------------------------------------
+   VARIÁVEIS
+   --------------------------------------------------------------------- */
+:root {
+  /* Paleta (tirada do próprio fundo) */
+  --sangue:        #b3121f;
+  --sangue-vivo:   #e8283a;
+  --vinho-fundo:   #14030a;
+  --osso:          #eadfd2;
+  --osso-apagado:  rgba(234, 223, 210, .55);
+
+  /* Imagem de fundo */
+  --fundo-imagem: url("../assets/images/fundo.png");
+  --fundo-posicao: 50% 40%;           /* qual parte da pintura fica no centro */
+
+  /* Texto principal */
+  --principal-fonte:      "FontePrincipal", "Palatino Linotype", Palatino, Georgia, serif;
+  --principal-tamanho:    clamp(2.4rem, 6.4vw, 5rem);
+  --principal-cor:        var(--osso);
+  --principal-espacamento: .06em;
+
+  /* Texto secreto */
+  --secreto-fonte:        "FonteSecreta", "Palatino Linotype", Palatino, Georgia, serif;
+  --secreto-tamanho:      clamp(1.6rem, 3.6vw, 2.5rem);
+  --secreto-cor:          rgba(234, 223, 210, .78);
+  --secreto-espacamento:  .3em;
+
+  /* Mensagem de sucesso */
+  --sucesso-fonte:        "Tormenta", "Palatino Linotype", Palatino, Georgia, serif;
+  --sucesso-tamanho:      clamp(2.4rem, 7vw, 4.6rem);
+  --sucesso-cor:          #fff1e6;
+
+  /* Ícones (os do icons8 costumam ser pretos: o filtro os deixa claros) */
+  --icone-filtro:   invert(1) opacity(.7);
+  --icone-render:   auto;             /* "pixelated" deixa o 16px com cara de pixel */
+  --cadeado-tamanho: 40px;
+  --acesso-tamanho:  52px;
+
+  /* Posição vertical do bloco de texto */
+  --topo-conteudo: 31vh;
+}
+
+/* ---------------------------------------------------------------------
+   BASE
+   --------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Garante que o atributo hidden vença qualquer display definido abaixo */
+[hidden] { display: none !important; }
+
+html { background: var(--vinho-fundo); }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  color: var(--osso);
+  background: var(--vinho-fundo);
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------------------------------------------------------------------
+   FUNDO
+   position:fixed + cover funciona melhor em celulares do que
+   background-attachment:fixed.
+   --------------------------------------------------------------------- */
+.fundo {
+  position: fixed; inset: 0; z-index: 0;
+  background: var(--fundo-imagem) var(--fundo-posicao) / cover no-repeat;
+}
+/* Escurece o miolo (legibilidade) e as bordas (clima), sem apagar a pintura */
+.veu {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    radial-gradient(ellipse 52% 46% at 50% 46%, rgba(10, 1, 4, .62) 0%, rgba(10, 1, 4, .34) 60%, transparent 100%),
+    radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(8, 0, 3, .6) 100%);
+}
+
+/* ---------------------------------------------------------------------
+   OLHOS
+   O contêiner .olho tem exatamente o tamanho da área VISÍVEL da esclera
+   (386×390 px dentro do PNG de 433×576). As imagens são deslocadas por
+   porcentagem para que as margens transparentes caiam fora dessa área.
+   Se trocar os PNGs, ajuste só os números marcados com [PNG].
+   --------------------------------------------------------------------- */
+.olhos { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
+
+.olho {
+  --w: min(22vmin, 18vw);             /* largura visível do olho */
+  position: absolute;
+  width: var(--w);
+  aspect-ratio: 386 / 390;            /* [PNG] área visível da esclera */
+  filter: drop-shadow(0 0 1.1rem rgba(210, 15, 35, .55)) drop-shadow(0 0 .2rem rgba(0, 0, 0, .8));
+}
+
+/* Posições: ajuste à vontade. Um pouco assimétricos de propósito. */
+.olho--esquerdo { left: 6vw;  top: 13vh; --w: min(23vmin, 18vw); }
+.olho--direito  { right: 8vw; top: 37vh; --w: min(19vmin, 15vw); }
+
+.olho__esclera {
+  position: absolute;
+  width: 112.18%;                     /* [PNG] 433 / 386 */
+  left: -6.22%;                       /* [PNG] -24 / 386 */
+  top: -23.85%;                       /* [PNG] -93 / 390 */
+  height: auto;
+  user-select: none;
+}
+
+/* Janela circular que impede a íris de sair do olho */
+.olho__janela {
+  position: absolute; inset: 0;
+  clip-path: circle(46% at 50% 50%);
+}
+
+/* Íris: diâmetro visível = 52% do olho. O JS só escreve --ix e --iy. */
+.olho__iris {
+  position: absolute;
+  width: 52%;
+  aspect-ratio: 1;
+  left: 24%; top: 24%;                /* (100% − 52%) / 2 */
+  transform: translate3d(var(--ix, 0px), var(--iy, 0px), 0);
+  will-change: transform;
+}
+.olho__iris img {
+  position: absolute;
+  width: 104.78%;                     /* [PNG] 920 / 878 */
+  left: -2.73%;                       /* [PNG] -24 / 878 */
+  top: -2.39%;                        /* [PNG] -21 / 878 */
+  height: auto;
+  user-select: none;
+}
+
+/* Sombra esférica por cima de tudo (dá volume de globo ocular) */
+.olho__sombra {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 50% 42%, transparent 52%, rgba(35, 0, 6, .5) 100%);
+}
+
+/* ---------------------------------------------------------------------
+   CONTEÚDO CENTRAL
+   Alinhado pelo topo para que o que aparece depois (Paraiso, olho de
+   acesso) nunca empurre os textos de cima.
+   --------------------------------------------------------------------- */
+.cena {
+  position: relative; z-index: 3;
+  min-height: 100vh; min-height: 100svh;
+  padding: var(--topo-conteudo) 1.25rem 4rem;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+}
+
+.texto-principal {
+  margin: 0;
+  font: 400 var(--principal-tamanho) / 1.05 var(--principal-fonte);
+  letter-spacing: var(--principal-espacamento);
+  color: var(--principal-cor);
+  text-shadow: 0 0 .6rem rgba(0, 0, 0, .85), 0 0 2.2rem rgba(179, 18, 31, .55);
+  text-wrap: balance;
+}
+
+.texto-secreto {
+  margin: .9rem 0 0;
+  font: 400 var(--secreto-tamanho) / 1.3 var(--secreto-fonte);
+  letter-spacing: var(--secreto-espacamento);
+  color: var(--secreto-cor);
+  text-shadow: 0 0 .5rem rgba(0, 0, 0, .9);
+  /* Dificulta a seleção e a cópia casual */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.texto-secreto::selection { background: transparent; }
+
+/* ---------------------------------------------------------------------
+   ÍCONES (cadeado e olho de acesso)
+   --------------------------------------------------------------------- */
+.icone {
+  display: block; width: 100%; height: 100%;
+  object-fit: contain;
+  filter: var(--icone-filtro);
+  image-rendering: var(--icone-render);
+  user-select: none; -webkit-user-drag: none;
+}
+
+/* Se algum arquivo de ícone ainda não existir, mostra um rótulo discreto */
+.sem-icone > img { display: none; }
+.sem-icone::after {
+  content: attr(data-rotulo);
+  font: italic .8rem / 1 Georgia, serif;
+  color: var(--osso-apagado);
+  letter-spacing: .15em;
+}
+
+.cadeado {
+  margin-top: 1.6rem;
+  width: var(--cadeado-tamanho); height: var(--cadeado-tamanho);
+  display: grid; place-items: center;
+  transition: filter .9s ease, transform .9s ease;
+}
+.cadeado .icone { transition: opacity .35s ease; }
+.cadeado.trocando .icone { opacity: 0; }
+.cadeado.aberto {
+  filter: drop-shadow(0 0 .7rem rgba(255, 80, 60, .85));
+  transform: scale(1.12);
+}
+
+/* ---------------------------------------------------------------------
+   CAMPO DE RESPOSTA
+   Sem caixa, sem cara de formulário: uma linha de sangue que respira.
+   --------------------------------------------------------------------- */
+.resposta {
+  margin-top: 1.8rem;
+  width: min(22rem, 86vw);
+  display: flex; align-items: baseline; gap: .6rem;
+  padding: .35rem .2rem .35rem .9rem;
+  background: linear-gradient(to bottom, transparent, rgba(8, 0, 3, .55));
+  border-bottom: 1px solid rgba(179, 18, 31, .75);
+  box-shadow: 0 .9rem 1.2rem -1rem rgba(232, 40, 58, .55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  transition: opacity .7s ease, transform .7s ease, border-color .3s, box-shadow .3s;
+}
+.resposta:focus-within {
+  border-bottom-color: var(--sangue-vivo);
+  box-shadow: 0 1rem 1.4rem -1rem rgba(232, 40, 58, .9);
+}
+.resposta.recusada { animation: tremor .45s ease; }
+.resposta.some { opacity: 0; transform: translateY(8px); pointer-events: none; }
+
+.resposta__campo {
+  flex: 1; min-width: 0;
+  background: transparent; border: 0; outline: 0;
+  color: var(--osso);
+  font: italic 1.15rem / 1.4 Georgia, "Times New Roman", serif;
+  letter-spacing: .08em;
+  text-align: center;
+  caret-color: var(--sangue-vivo);
+}
+.resposta__campo::placeholder { color: rgba(234, 223, 210, .3); }
+
+.resposta__enviar {
+  background: none; border: 0; padding: .2rem .3rem; cursor: pointer;
+  color: var(--osso-apagado);
+  font: italic .85rem / 1 Georgia, serif;
+  letter-spacing: .12em;
+  transition: color .25s;
+}
+.resposta__enviar:hover,
+.resposta__enviar:focus-visible { color: var(--sangue-vivo); outline: none; }
+.resposta__campo:focus-visible { outline: none; }
+.resposta__enviar:focus-visible { text-decoration: underline; text-underline-offset: .3em; }
+
+.erro {
+  min-height: 1.4em;
+  margin: .7rem 0 0;
+  font: italic .95rem / 1.4 Georgia, serif;
+  letter-spacing: .08em;
+  color: #d9585f;
+  opacity: 0;
+  transition: opacity .5s ease;
+  text-shadow: 0 0 .5rem rgba(0, 0, 0, .9);
+}
+.erro.visivel { opacity: 1; }
+.erro.some { display: none; }
+
+@keyframes tremor {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+
+/* ---------------------------------------------------------------------
+   MENSAGEM DE SUCESSO + PASSAGEM SECRETA
+   --------------------------------------------------------------------- */
+.sucesso {
+  margin: 1.8rem 0 0;
+  font: 400 var(--sucesso-tamanho) / 1.1 var(--sucesso-fonte);
+  color: var(--sucesso-cor);
+  letter-spacing: .08em;
+  opacity: 0;
+  filter: blur(8px);
+  transform: scale(.96);
+  text-shadow: 0 0 .8rem rgba(0, 0, 0, .9), 0 0 2rem rgba(232, 40, 58, .9), 0 0 4rem rgba(179, 18, 31, .8);
+  transition: opacity 1.8s ease, filter 1.8s ease, transform 1.8s ease;
+}
+.sucesso.revelado { opacity: 1; filter: blur(0); transform: scale(1); }
+
+.acesso {
+  position: relative;
+  margin-top: 1.6rem;
+  width: var(--acesso-tamanho); height: var(--acesso-tamanho);
+  display: grid; place-items: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 1.6s ease, transform 1.6s ease, filter .5s ease;
+}
+.acesso.revelado { opacity: .85; transform: none; }
+.acesso.revelado:hover,
+.acesso.revelado:focus-visible { opacity: 1; filter: drop-shadow(0 0 .8rem rgba(232, 40, 58, .9)); outline: none; }
+
+/* Os dois estados do olho ficam empilhados; só a opacidade muda */
+.acesso .icone { position: absolute; inset: 0; transition: opacity .35s ease; }
+.acesso__aberto { opacity: 0; }
+.acesso:hover .acesso__aberto,
+.acesso:focus-visible .acesso__aberto,
+.acesso:active .acesso__aberto { opacity: 1; }
+.acesso:hover .acesso__fechado,
+.acesso:focus-visible .acesso__fechado,
+.acesso:active .acesso__fechado { opacity: 0; }
+
+/* Sem mouse: o olho fica "entreaberto" o tempo todo, para ser visível e tocável */
+@media (hover: none) {
+  .acesso.revelado { opacity: 1; }
+}
+
+/* ---------------------------------------------------------------------
+   TELAS ESTREITAS / RETRATO: olhos sobem para o topo e viram "vigias"
+   --------------------------------------------------------------------- */
+@media (max-width: 900px), (max-aspect-ratio: 1/1) {
+  :root { --topo-conteudo: 34vh; }
+  .olho--esquerdo { left: 7vw;  top: 6vh;  --w: min(34vw, 20vh); }
+  .olho--direito  { right: 9vw; top: 13vh; --w: min(28vw, 17vh); }
+  .fundo { --fundo-posicao: 50% 35%; }
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+  :root { --topo-conteudo: 14vh; }
+  .olho--esquerdo { top: 8vh; }
+  .olho--direito  { top: 40vh; }
+}
+
+/* Créditos discretos no rodapé */
+.creditos {
+  position: fixed; left: 0; right: 0; bottom: .6rem; z-index: 3;
+  text-align: center;
+  font: italic .7rem / 1.4 Georgia, serif;
+  letter-spacing: .06em;
+  color: rgba(234, 223, 210, .35);
+  pointer-events: none;
+}
+.creditos a { color: inherit; text-decoration: none; pointer-events: auto; }
+.creditos a:hover, .creditos a:focus-visible { color: var(--osso); text-decoration: underline; }
+
+/* ---------------------------------------------------------------------
+   PREFERÊNCIA POR MENOS MOVIMENTO
+   --------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .resposta, .resposta.recusada, .cadeado, .cadeado .icone,
+  .sucesso, .acesso, .acesso .icone, .erro { transition-duration: .01s; animation: none; }
+  .sucesso { filter: none; }
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Did u saw?</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Cenário -->
+  <div class="fundo" aria-hidden="true"></div>
+  <div class="veu" aria-hidden="true"></div>
+
+  <!-- ================= OLHOS =================
+       A esclera (brancolho.png) é fixa; a íris (Pupila.png) é a camada móvel.
+       O tamanho e a posição de cada olho ficam no CSS (.olho--esquerdo / .olho--direito). -->
+  <div class="olhos" aria-hidden="true">
+    <div class="olho olho--esquerdo" data-olho>
+      <img class="olho__esclera" src="assets/images/brancolho.png" alt="" draggable="false">
+      <div class="olho__janela">
+        <div class="olho__iris"><img src="assets/images/Pupila.png" alt="" draggable="false"></div>
+      </div>
+      <div class="olho__sombra"></div>
+    </div>
+
+    <div class="olho olho--direito" data-olho>
+      <img class="olho__esclera" src="assets/images/brancolho.png" alt="" draggable="false">
+      <div class="olho__janela">
+        <div class="olho__iris"><img src="assets/images/Pupila.png" alt="" draggable="false"></div>
+      </div>
+      <div class="olho__sombra"></div>
+    </div>
+  </div>
+
+  <!-- ================= CONTEÚDO CENTRAL ================= -->
+  <main class="cena">
+
+    <!-- Texto principal: edite aqui (ou em CONFIG.textoPrincipal, no JS) -->
+    <h1 class="texto-principal" id="texto-principal">"Reflita o inédito"</h1>
+    <h1 class="texto-secreto" id="texto-secreto">"Reflita o inédito"</h1>
+
+    <!-- Texto secreto: edite aqui. Fonte própria, sem seleção. -->
+    <p class="texto-secreto" id="texto-secreto">"Decifre, ilumine, retorne"</p>
+
+    <!-- Cadeado: o src é definido por CONFIG.icones no JS -->
+    <div class="cadeado" id="cadeado" data-rotulo="trancado">
+      <img class="icone" id="cadeado-img" alt="Trancado" draggable="false">
+    </div>
+
+    <!-- Campo de resposta -->
+    <form class="resposta" id="resposta" autocomplete="off" novalidate>
+      <label class="sr-only" for="resposta-campo">Resposta</label>
+      <input class="resposta__campo" id="resposta-campo" type="text"
+             autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+             maxlength="80" placeholder="…">
+      <button class="resposta__enviar" type="submit">responder</button>
+    </form>
+    <p class="erro" id="erro" role="status" aria-live="polite"></p>
+
+    <!-- Mensagem de sucesso: edite o texto aqui (ou em CONFIG.mensagemSucesso, no JS) -->
+    <p class="sucesso" id="sucesso" hidden>Você recebe "Pá espectral"</p>
+
+    <!-- Passagem secreta.
+         NÃO tem href aqui: o destino só é colocado pelo JavaScript depois do desbloqueio.
+         Enquanto estiver "hidden" ela não ocupa espaço nem recebe clique. -->
+    <a class="acesso" id="acesso" hidden aria-label="Atravessar" data-rotulo="◉">
+      <img class="acesso__fechado icone" id="acesso-fechado" alt="" draggable="false">
+      <img class="acesso__aberto icone"  id="acesso-aberto"  alt="" draggable="false">
+    </a>
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
